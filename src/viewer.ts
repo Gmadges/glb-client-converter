@@ -16,6 +16,7 @@ import THREE, {
   BufferGeometry,
 } from 'three';
 import {loadOBJ_MTL, loadOBJ, loadFBX, loadGLB} from './loaders';
+import {GLTFExporter} from 'three/examples/jsm/exporters/GLTFExporter';
 
 const enum TYPE {
   OBJ,
@@ -23,6 +24,20 @@ const enum TYPE {
   OBJ_MTL,
   FBX,
 }
+
+var saveData = (function() {
+  var a = document.createElement('a');
+  document.body.appendChild(a);
+  a.setAttribute('style', 'display: none');
+  return function(data, fileName) {
+    const blob = new Blob([data], {type: 'application/octet-stream'});
+    const url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+})();
 
 function getFileExtension(filename: string): string {
   const matches = /\.[0-9a-z]+$/i.exec(filename);
@@ -93,32 +108,61 @@ export class Viewer {
     });
 
     // move camera to model
-    const box = new Box3();
-    box.setFromObject(model);
+    this.fitCameraToObject(model);
+  }
 
-    const boxDimensions = new Vector3();
-    box.getSize(boxDimensions);
-
-    const boxCenter = new Vector3();
-    box.getCenter(boxCenter);
-
-    const cameraOffset = Math.min(
-      this.camera.far,
-      (Math.sqrt(
-        boxDimensions.x * boxDimensions.x + boxDimensions.y * boxDimensions.y
-      ) *
-        0.5) /
-        Math.tan(this.camera.fov * 0.5)
+  public export(): void {
+    new GLTFExporter().parse(
+      this.scene,
+      (gltf: ArrayBuffer) => {
+        saveData(gltf, 'export.glb');
+      },
+      {binary: true}
     );
+  }
 
-    const tiltFactor = 0.8;
-    this.camera.position.set(
-      boxCenter.x,
-      boxCenter.y - tiltFactor * cameraOffset,
-      boxCenter.z + cameraOffset
-    );
+  private fitCameraToObject(object: Object3D) {
+    const offset = 1.25;
 
-    this.cameraLookAtVector(boxCenter);
+    const boundingBox = new Box3();
+
+    // get bounding box of object - this will be used to setup controls and camera
+    boundingBox.setFromObject(object);
+
+    const size = new Vector3();
+    boundingBox.getSize(size);
+
+    const center = new Vector3();
+    boundingBox.getCenter(center);
+
+    // get the max side of the bounding box (fits to width OR height as needed )
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const fov = this.camera.fov * (Math.PI / 180);
+    let cameraZ = Math.abs((maxDim / 4) * Math.tan(fov * 2));
+
+    cameraZ *= offset; // zoom out a little so that objects don't fill the screen
+
+    this.camera.position.z = cameraZ;
+
+    const minZ = boundingBox.min.z;
+    const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ - minZ;
+
+    this.camera.far = cameraToFarEdge * 3;
+    this.camera.updateProjectionMatrix();
+
+    if (this.controls) {
+      // set camera to rotate around center of loaded object
+      this.controls.target = center;
+
+      // prevent camera from zooming out far enough to create far plane cutoff
+      this.controls.maxDistance = cameraToFarEdge * 2;
+
+      this.controls.autoRotate = true;
+
+      this.controls.saveState();
+    } else {
+      this.camera.lookAt(center);
+    }
   }
 
   private getLoader(urls: Array<[string, File]>): null | TYPE {

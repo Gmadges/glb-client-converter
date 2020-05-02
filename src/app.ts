@@ -27,7 +27,9 @@ const dropCtrl = new SimpleDropzone(dropEl, inputEl);
 
 dropCtrl.on('drop', ({files}) => {
   hideModal();
-  viewer.load(Array.from(files));
+  viewer.load(Array.from(files)).then(() => {
+    viewer.export();
+  });
 });
 
 dropCtrl.on('dropstart', () => console.log('start load'));
