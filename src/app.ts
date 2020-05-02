@@ -16,10 +16,20 @@ const viewer: Viewer = new Viewer(
   document.getElementById('viewer') as HTMLCanvasElement
 );
 
+function hideModal() {
+  const modal = document.querySelector<HTMLElement>('.modal');
+  modal.setAttribute('style', 'display: none');
+}
+
 const dropEl = document.querySelector('.dropzone');
 const inputEl = document.querySelector('#file-input');
 const dropCtrl = new SimpleDropzone(dropEl, inputEl);
-dropCtrl.on('drop', ({files}) => console.log(files));
+
+dropCtrl.on('drop', ({files}) => {
+  hideModal();
+  viewer.load(Array.from(files));
+});
+
 dropCtrl.on('dropstart', () => console.log('start load'));
 dropCtrl.on('droperror', () => console.log('stop load'));
 

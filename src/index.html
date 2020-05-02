@@ -19,7 +19,13 @@
           <p>Drag files here</p>
         </div>
         <div class="upload-btn">
-          <input type="file" name="file-input[]" id="file-input" multiple="" />
+          <input
+            type="file"
+            name="file-input[]"
+            id="file-input"
+            multiple=""
+            accept=".glb,.obj,.fbx,.mtl,.kmz"
+          />
           <label for="file-input">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -35,14 +41,6 @@
           </label>
         </div>
       </div>
-    </div>
-    <div class="sk-chase">
-      <div class="sk-chase-dot"></div>
-      <div class="sk-chase-dot"></div>
-      <div class="sk-chase-dot"></div>
-      <div class="sk-chase-dot"></div>
-      <div class="sk-chase-dot"></div>
-      <div class="sk-chase-dot"></div>
     </div>
     <canvas id="viewer"></canvas>
     <script src="./app.ts"></script>
