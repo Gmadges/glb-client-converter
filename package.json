@@ -1,0 +1,19 @@
+{
+  "name": "glb-client-converter",
+  "version": "1.0.0",
+  "description": "Convert from OBJ to GLB",
+  "author": "George Madges",
+  "license": "MIT",
+  "scripts": {
+    "build": "parcel ./src/index.html",
+    "dev": "parcel ./src/index.html"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "simple-dropzone": "^0.7.0",
+    "three": "^0.116.1"
+  }
+}
