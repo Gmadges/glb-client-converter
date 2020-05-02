@@ -15,13 +15,12 @@ import THREE, {
   Mesh,
   BufferGeometry,
 } from 'three';
-import {loadOBJ_MTL, loadOBJ, loadKMZ, loadFBX, loadGLB} from './loaders';
+import {loadOBJ_MTL, loadOBJ, loadFBX, loadGLB} from './loaders';
 
 const enum TYPE {
   OBJ,
   GLB,
   OBJ_MTL,
-  KMZ,
   FBX,
 }
 
@@ -132,8 +131,6 @@ export class Viewer {
 
     if (exts.includes('.obj')) return TYPE.OBJ;
 
-    if (exts.includes('.kmz')) return TYPE.KMZ;
-
     if (exts.includes('.glb')) return TYPE.GLB;
 
     if (exts.includes('.fbx')) return TYPE.FBX;
@@ -166,10 +163,6 @@ export class Viewer {
       case TYPE.GLB: {
         const [name, file] = obj1;
         return await loadGLB(URL.createObjectURL(file));
-      }
-      case TYPE.KMZ: {
-        const [name, file] = obj1;
-        return await loadKMZ(URL.createObjectURL(file));
       }
       case TYPE.FBX: {
         const [name, file] = obj1;
