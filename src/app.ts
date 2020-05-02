@@ -16,20 +16,12 @@ const viewer: Viewer = new Viewer(
   document.getElementById('viewer') as HTMLCanvasElement
 );
 
-// document.addEventListener('dragenter', handlerFunction, false);
-// document.addEventListener('dragleave', handlerFunction, false);
-// document.addEventListener('dragover', handlerFunction, false);
-// document.addEventListener('drop', handlerFunction, false);
-
-this.dropEl = document.querySelector('.dropzone');
-this.inputEl = document.querySelector('#file-input');
-
-function createDropzone() {
-  const dropCtrl = new SimpleDropzone(this.dropEl, this.inputEl);
-  dropCtrl.on('drop', ({files}) => this.load(files));
-  dropCtrl.on('dropstart', () => this.showSpinner());
-  dropCtrl.on('droperror', () => this.hideSpinner());
-}
+const dropEl = document.querySelector('.dropzone');
+const inputEl = document.querySelector('#file-input');
+const dropCtrl = new SimpleDropzone(dropEl, inputEl);
+dropCtrl.on('drop', ({files}) => console.log(files));
+dropCtrl.on('dropstart', () => console.log('start load'));
+dropCtrl.on('droperror', () => console.log('stop load'));
 
 function render() {
   viewer.render();
