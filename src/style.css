@@ -5,6 +5,7 @@ body {
   font-family: 'OpenSans', sans-serif;
   height: 100%;
   overflow: hidden;
+  background-color: #616161;
 }
 
 * {
@@ -214,6 +215,7 @@ header h1 + .separator {
 }
 
 .export-container {
+  display: none;
   position: fixed;
   z-index: 1;
   right: 5%;
@@ -314,6 +316,7 @@ header h1 + .separator {
 }
 
 .spinner {
+  display: none;
   position: fixed;
   z-index: 1;
   left: 47%;

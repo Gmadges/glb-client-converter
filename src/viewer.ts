@@ -54,7 +54,7 @@ export class Viewer {
 
   constructor(canvas: HTMLCanvasElement) {
     this.scene = new Scene();
-    this.scene.background = new Color(0x000000);
+    this.scene.background = new Color(0x616161);
 
     this.renderer = new WebGLRenderer({
       canvas,
