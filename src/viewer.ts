@@ -138,6 +138,15 @@ export class Viewer {
     const center = new Vector3();
     boundingBox.getCenter(center);
 
+    console.log(
+      `center of model: ${center.x.toFixed(2)}, ${center.y.toFixed(
+        2
+      )}, ${center.z.toFixed(2)}`,
+      `size of model: ${size.x.toFixed(2)}, ${size.y.toFixed(
+        2
+      )}, ${size.z.toFixed(2)}`
+    );
+
     // get the max side of the bounding box (fits to width OR height as needed )
     const maxDim = Math.max(size.x, size.y, size.z);
     const fov = this.camera.fov * (Math.PI / 180);
