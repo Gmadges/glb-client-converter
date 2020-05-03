@@ -17,17 +17,6 @@ export function loadFBX(url: string): Promise<Object3D> {
   });
 }
 
-export function loadGLB(url: string): Promise<Object3D> {
-  return new Promise((resolve, reject) => {
-    new GLTFLoader().load(
-      url,
-      item => resolve(item.scene),
-      () => {},
-      err => reject(err)
-    );
-  });
-}
-
 export function loadOBJ(url: string): Promise<Object3D> {
   return new Promise((resolve, reject) => {
     new OBJLoader().load(

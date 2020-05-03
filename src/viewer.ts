@@ -15,12 +15,11 @@ import THREE, {
   Mesh,
   BufferGeometry,
 } from 'three';
-import {loadOBJ_MTL, loadOBJ, loadFBX, loadGLB} from './loaders';
+import {loadOBJ_MTL, loadOBJ, loadFBX} from './loaders';
 import {GLTFExporter} from 'three/examples/jsm/exporters/GLTFExporter';
 
 const enum TYPE {
   OBJ,
-  GLB,
   OBJ_MTL,
   FBX,
 }
@@ -71,6 +70,7 @@ export class Viewer {
       1,
       1000
     );
+    this.camera.up.set(0, 0, 1);
     this.camera.position.set(400, 200, 0);
 
     // controls
@@ -150,31 +150,29 @@ export class Viewer {
     // get the max side of the bounding box (fits to width OR height as needed )
     const maxDim = Math.max(size.x, size.y, size.z);
     const fov = this.camera.fov * (Math.PI / 180);
-    let cameraZ = Math.abs((maxDim / 4) * Math.tan(fov * 2));
-
-    cameraZ *= offset; // zoom out a little so that objects don't fill the screen
-
-    this.camera.position.z = cameraZ;
+    const cameraZ = Math.abs((maxDim / 4) * Math.tan(fov * 2)) * offset;
 
     const minZ = boundingBox.min.z;
     const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ - minZ;
 
-    this.camera.far = cameraToFarEdge * 3;
+    this.camera.far = cameraToFarEdge * 4;
+
+    this.camera.position.set(center.x, center.y, center.z + cameraZ);
+
     this.camera.updateProjectionMatrix();
 
-    if (this.controls) {
-      // set camera to rotate around center of loaded object
-      this.controls.target = center;
+    console.log(
+      `camera pos: ${this.camera.position.x.toFixed(
+        2
+      )}, ${this.camera.position.y.toFixed(
+        2
+      )}, ${this.camera.position.z.toFixed(2)}`
+    );
 
-      // prevent camera from zooming out far enough to create far plane cutoff
-      this.controls.maxDistance = cameraToFarEdge * 2;
-
-      this.controls.autoRotate = true;
-
-      this.controls.saveState();
-    } else {
-      this.camera.lookAt(center);
-    }
+    this.controls.target = center;
+    this.controls.maxDistance = cameraToFarEdge * 3;
+    this.controls.autoRotate = true;
+    this.controls.saveState();
   }
 
   private getLoader(urls: Array<[string, File]>): null | TYPE {
@@ -186,8 +184,6 @@ export class Viewer {
     }
 
     if (exts.includes('.obj')) return TYPE.OBJ;
-
-    if (exts.includes('.glb')) return TYPE.GLB;
 
     if (exts.includes('.fbx')) return TYPE.FBX;
 
@@ -215,10 +211,6 @@ export class Viewer {
       case TYPE.OBJ: {
         const [name, file] = obj1;
         return await loadOBJ(URL.createObjectURL(file));
-      }
-      case TYPE.GLB: {
-        const [name, file] = obj1;
-        return await loadGLB(URL.createObjectURL(file));
       }
       case TYPE.FBX: {
         const [name, file] = obj1;
