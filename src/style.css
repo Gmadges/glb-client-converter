@@ -215,7 +215,6 @@ header h1 + .separator {
 }
 
 .export-container {
-  display: none;
   position: fixed;
   z-index: 1;
   right: 5%;
@@ -316,7 +315,6 @@ header h1 + .separator {
 }
 
 .spinner {
-  display: none;
   position: fixed;
   z-index: 1;
   left: 47%;
