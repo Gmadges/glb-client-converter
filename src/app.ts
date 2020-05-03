@@ -16,8 +16,38 @@ const viewer: Viewer = new Viewer(
   document.getElementById('viewer') as HTMLCanvasElement
 );
 
+document.getElementById('export').onclick = () => {
+  showSpinner();
+  viewer.export().then(() => hideSpinner());
+};
+
 function hideModal() {
   const modal = document.querySelector<HTMLElement>('.modal');
+  modal.setAttribute('style', 'display: none');
+}
+
+function showModal() {
+  const modal = document.querySelector<HTMLElement>('.modal');
+  modal.removeAttribute('style');
+}
+
+function showExport() {
+  const modal = document.querySelector<HTMLElement>('.export-container');
+  modal.removeAttribute('style');
+}
+
+function hideExport() {
+  const modal = document.querySelector<HTMLElement>('.export-container');
+  modal.setAttribute('style', 'display: none');
+}
+
+function showSpinner() {
+  const modal = document.querySelector<HTMLElement>('.spinner');
+  modal.removeAttribute('style');
+}
+
+function hideSpinner() {
+  const modal = document.querySelector<HTMLElement>('.spinner');
   modal.setAttribute('style', 'display: none');
 }
 
@@ -27,8 +57,10 @@ const dropCtrl = new SimpleDropzone(dropEl, inputEl);
 
 dropCtrl.on('drop', ({files}) => {
   hideModal();
+  showSpinner();
   viewer.load(Array.from(files)).then(() => {
-    viewer.export();
+    hideSpinner();
+    showExport();
   });
 });
 
@@ -40,4 +72,8 @@ function render() {
   stats.update();
   requestAnimationFrame(render);
 }
+
+showModal();
+hideExport();
+hideSpinner();
 render();

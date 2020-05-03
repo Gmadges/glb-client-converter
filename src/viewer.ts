@@ -111,14 +111,17 @@ export class Viewer {
     this.fitCameraToObject(model);
   }
 
-  public export(): void {
-    new GLTFExporter().parse(
-      this.scene,
-      (gltf: ArrayBuffer) => {
-        saveData(gltf, 'export.glb');
-      },
-      {binary: true}
-    );
+  public export(): Promise<void> {
+    return new Promise<void>((resolve, error) => {
+      new GLTFExporter().parse(
+        this.scene,
+        (gltf: ArrayBuffer) => {
+          saveData(gltf, 'export.glb');
+          resolve();
+        },
+        {binary: true}
+      );
+    });
   }
 
   private fitCameraToObject(object: Object3D) {
