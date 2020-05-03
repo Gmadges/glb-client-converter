@@ -5,7 +5,7 @@
   "author": "George Madges",
   "license": "MIT",
   "scripts": {
-    "build": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html",
     "dev": "parcel ./src/index.html"
   },
   "devDependencies": {
