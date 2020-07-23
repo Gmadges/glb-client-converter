@@ -15,13 +15,14 @@ import THREE, {
   Mesh,
   BufferGeometry,
 } from 'three';
-import {loadOBJ_MTL, loadOBJ, loadFBX} from './loaders';
+import {loadOBJ_MTL, loadOBJ, loadFBX, loadGLB} from './loaders';
 import {GLTFExporter} from 'three/examples/jsm/exporters/GLTFExporter';
 
 const enum TYPE {
   OBJ,
   OBJ_MTL,
   FBX,
+  GLB,
 }
 
 var saveData = (function() {
@@ -187,6 +188,8 @@ export class Viewer {
 
     if (exts.includes('.fbx')) return TYPE.FBX;
 
+    if (exts.includes('.glb')) return TYPE.GLB;
+
     return null;
   }
 
@@ -215,6 +218,10 @@ export class Viewer {
       case TYPE.FBX: {
         const [name, file] = obj1;
         return await loadFBX(URL.createObjectURL(file));
+      }
+      case TYPE.GLB: {
+        const [name, file] = obj1;
+        return await loadGLB(URL.createObjectURL(file));
       }
     }
   }

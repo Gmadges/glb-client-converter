@@ -4,13 +4,32 @@ import {MTLLoader} from 'three/examples/jsm/loaders/MTLLoader';
 import {TGALoader} from 'three/examples/jsm/loaders/TGALoader';
 import {DDSLoader} from 'three/examples/jsm/loaders/DDSLoader';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
-import {Object3D, LoadingManager} from 'three';
+import {Object3D, LoadingManager, MeshLambertMaterial} from 'three';
+import {MeshStandardMaterial} from 'three/build/three.module';
 
 export function loadFBX(url: string): Promise<Object3D> {
   return new Promise((resolve, reject) => {
     new FBXLoader().load(
       url,
       item => resolve(item),
+      () => {},
+      err => reject(err)
+    );
+  });
+}
+
+export function loadGLB(url: string): Promise<Object3D> {
+  return new Promise((resolve, reject) => {
+    new GLTFLoader().load(
+      url,
+      item => {
+        item.scene.traverse((item: any) => {
+          if (item.material) {
+            item.material = new MeshLambertMaterial().copy(item.material);
+          }
+        });
+        resolve(item.scene);
+      },
       () => {},
       err => reject(err)
     );
