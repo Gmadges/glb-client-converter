@@ -5,7 +5,6 @@ import {TGALoader} from 'three/examples/jsm/loaders/TGALoader';
 import {DDSLoader} from 'three/examples/jsm/loaders/DDSLoader';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import {Object3D, LoadingManager, MeshLambertMaterial} from 'three';
-import {MeshStandardMaterial} from 'three/build/three.module';
 
 export function loadFBX(url: string): Promise<Object3D> {
   return new Promise((resolve, reject) => {

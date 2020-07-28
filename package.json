@@ -13,6 +13,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "notyf": "^3.9.0",
     "simple-dropzone": "^0.7.0",
     "three": "^0.116.1"
   }

@@ -11,12 +11,24 @@ import THREE, {
   Quaternion,
   Matrix4,
   Box3,
-  Group,
   Mesh,
   BufferGeometry,
 } from 'three';
 import {loadOBJ_MTL, loadOBJ, loadFBX, loadGLB} from './loaders';
 import {GLTFExporter} from 'three/examples/jsm/exporters/GLTFExporter';
+import {Notyf} from 'notyf';
+import 'notyf/notyf.min.css';
+
+// Create an instance of Notyf
+const notyf = new Notyf({
+  position: {x: 'left', y: 'bottom'},
+  types: [
+    {
+      type: 'error',
+      duration: 5000,
+    },
+  ],
+});
 
 const enum TYPE {
   OBJ,
@@ -25,7 +37,7 @@ const enum TYPE {
   GLB,
 }
 
-var saveData = (function() {
+const saveData = (function() {
   var a = document.createElement('a');
   document.body.appendChild(a);
   a.setAttribute('style', 'display: none');
@@ -96,20 +108,27 @@ export class Viewer {
 
   public async load(urls: Array<[string, File]>): Promise<void> {
     const type = this.getLoader(urls);
-    if (type === null) throw 'not valid files';
-    const model = await this.loadModel(type, urls);
-    this.scene.add(model);
+    try {
+      if (type === null) throw 'not valid files';
 
-    model.traverse(item => {
-      if (item instanceof Mesh) {
-        if (!(item.geometry as BufferGeometry).attributes.normal) {
-          item.geometry.computeVertexNormals();
+      const model = await this.loadModel(type, urls);
+      this.scene.add(model);
+
+      model.traverse(item => {
+        if (item instanceof Mesh) {
+          if (!(item.geometry as BufferGeometry).attributes.normal) {
+            item.geometry.computeVertexNormals();
+          }
         }
-      }
-    });
+      });
 
-    // move camera to model
-    this.fitCameraToObject(model);
+      // move camera to model
+      this.fitCameraToObject(model);
+
+      notyf.success('Success!');
+    } catch (err) {
+      notyf.error(`Error loading file: ${err}`);
+    }
   }
 
   public export(): Promise<void> {
